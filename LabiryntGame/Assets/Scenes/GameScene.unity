@@ -303,8 +303,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6692f695c12306408aa050f81eddf82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  emptyGridCellSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   gamePanel: {fileID: 2081501922}
+  obstackleSprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  playerSprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  endPointSprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 0}
 --- !u!4 &1113849020
 Transform:
   m_ObjectHideFlags: 0

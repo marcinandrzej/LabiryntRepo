@@ -7,15 +7,8 @@ public class GridScript : MonoBehaviour
     private bool[,] gridCellsOcuppancy;
     private Vector2[,] gridCellsCoordinates;
 
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private int endPointX;
+    private int endPointY;
 
     public Vector2 GetCoordinates(int x, int y)
     {
@@ -64,6 +57,13 @@ public class GridScript : MonoBehaviour
         }
     }
 
+    public void SetEndPoint(int[] xy)
+    {
+        endPointX = xy[0];
+        endPointY = xy[1];
+        gridCellsOcuppancy[xy[0], xy[1]] = true;
+    }
+
     private bool IsInGrid(int x, int y)
     {
         if (x >= 0 && x < gridCellsCoordinates.GetLength(0) && y >= 0 && y < gridCellsCoordinates.GetLength(1))
@@ -91,5 +91,12 @@ public class GridScript : MonoBehaviour
             }
         }
         return null;
+    }
+
+    public bool IsEndPoint(int[] xy)
+    {
+        if (endPointX == xy[0] && endPointY == xy[1])
+            return true;
+        return false;
     }
 }
