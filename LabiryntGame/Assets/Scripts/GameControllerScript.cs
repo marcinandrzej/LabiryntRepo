@@ -5,9 +5,8 @@ using UnityEngine.UI;
 
 public class GameControllerScript : MonoBehaviour
 {
-    private const int GRID_DIMENSION = 10;
+    public const int GRID_DIMENSION = 8;
 
-    public static GameControllerScript inastance;
     public GameObject gamePanel;
     public Sprite obstackleSprite;
     public Sprite playerSprite;
@@ -17,15 +16,49 @@ public class GameControllerScript : MonoBehaviour
     private GridScript gridScript;
     private LevelsScript levelScript;
 
+    private bool win;
     private float imageW;
     private float imageH;
-    private List<GameObject> obstackles;
+    private List<GameObject> gameObjects;
     private GameObject player;
 
-    void Awake()
+    public float ImageW
     {
-        if (inastance == null)
-            inastance = this;
+        get
+        {
+            return imageW;
+        }
+
+        set
+        {
+            imageW = value;
+        }
+    }
+
+    public float ImageH
+    {
+        get
+        {
+            return imageH;
+        }
+
+        set
+        {
+            imageH = value;
+        }
+    }
+
+    public bool Win
+    {
+        get
+        {
+            return win;
+        }
+
+        set
+        {
+            win = value;
+        }
     }
 
     // Use this for initialization
@@ -46,23 +79,23 @@ public class GameControllerScript : MonoBehaviour
 
     private void SetGameGrid(int columnCount, int rowsCount, GameObject gridPanel)
     {
-        imageW = Mathf.Abs(gridPanel.GetComponent<RectTransform>().sizeDelta.x) / (float)columnCount;
-        imageH = Mathf.Abs(gridPanel.GetComponent<RectTransform>().sizeDelta.y) / (float)rowsCount;
+        ImageW = Mathf.Abs(gridPanel.GetComponent<RectTransform>().sizeDelta.x) / (float)columnCount;
+        ImageH = Mathf.Abs(gridPanel.GetComponent<RectTransform>().sizeDelta.y) / (float)rowsCount;
         gridScript.SetGridOccupancy(columnCount, rowsCount);
-        gridScript.SetGridCoordinates(gamePanel.transform, columnCount, rowsCount, imageW, imageH);
+        gridScript.SetGridCoordinates(gamePanel.transform, columnCount, rowsCount, ImageW, ImageH);
     }
 
     private void LoadLevel(int lvlNumber)
     {
         // SET OBSTACKLES
         gridScript.LoadLevel(GRID_DIMENSION, GRID_DIMENSION, levelScript.GetLevel(GRID_DIMENSION, lvlNumber));
-        obstackles = new List<GameObject>();
+        gameObjects = new List<GameObject>();
         for (int i = 0; i < GRID_DIMENSION; i++)
         {
             for (int j = 0; j < GRID_DIMENSION; j++)
             {
                 if (gridScript.IsOccuppied(i, j))
-                    obstackles.Add(guiScript.CreateImage("Obstackle", gamePanel.transform, new Vector2(imageW, imageH),
+                    gameObjects.Add(guiScript.CreateImage("Obstackle", gamePanel.transform, new Vector2(ImageW, ImageH),
                     new Vector2(0, 1), new Vector2(0, 1), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f),
                    gridScript.GetCoordinates(i, j), new Vector3(0, 0, 0), obstackleSprite, Image.Type.Sliced, new Color32(255, 255, 255, 255)));
             }
@@ -70,15 +103,28 @@ public class GameControllerScript : MonoBehaviour
         // SET EXIT
         int[] xy = levelScript.GetEndPoint(lvlNumber);
         gridScript.SetEndPoint(xy);
-        obstackles.Add(guiScript.CreateImage("EndPoint", gamePanel.transform, new Vector2(imageW, imageH),
+        gameObjects.Add(guiScript.CreateImage("EndPoint", gamePanel.transform, new Vector2(ImageW, ImageH),
                     new Vector2(0, 1), new Vector2(0, 1), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f),
                    gridScript.GetCoordinates(xy[0], xy[1]), new Vector3(0, 0, 0), endPointSprite, Image.Type.Sliced, new Color32(255, 255, 255, 255)));
         // SET PLAYER
         xy = levelScript.GetStartPoint(lvlNumber);
-        player = guiScript.CreateImage("Player", gamePanel.transform, new Vector2(imageW, imageH),
+        player = guiScript.CreateImage("Player", gamePanel.transform, new Vector2(ImageW, ImageH),
                     new Vector2(0, 1), new Vector2(0, 1), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f),
                    gridScript.GetCoordinates(xy[0], xy[1]), new Vector3(0, 0, 0), playerSprite, Image.Type.Sliced, new Color32(255, 255, 255, 255));
         player.AddComponent<PlayerControlScript>();
         player.GetComponent<PlayerControlScript>().SetPlayer(xy, 15, this, gridScript);
+        gameObjects.Add(player);
+    }
+
+    public void EndLevel()
+    {
+        if (Win)
+        {
+            Debug.Log("win");
+        }
+        else
+        {
+            Debug.Log("lose");
+        }
     }
 }

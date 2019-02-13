@@ -53,22 +53,28 @@ public class PlayerControlScript : MonoBehaviour
         gridScript = _gridScript;
     }
 
-    private void Move(int deltaX, int deltaY)
+    public void Move(int deltaX, int deltaY)
     {
         inMove = true;
         int[] blocadePos = gridScript.SeekBlocade(posX, posY, deltaX, deltaY);
+        Vector2 destination;
         if (blocadePos != null)
         {
             int deltaPos = Mathf.Abs(blocadePos[0] - posX) + Mathf.Abs(blocadePos[1] - posY);
             if (gridScript.IsEndPoint(blocadePos))
             {
-                StartCoroutine(MoveCoroutine(blocadePos, true));
+                gameController.Win = true;
+                destination = gridScript.GetCoordinates(blocadePos[0], blocadePos[1]);
+                StartCoroutine(MoveCoroutine(destination, true));
             }
             else if(deltaPos > 1)
             {
                 blocadePos[0] -= deltaX;
                 blocadePos[1] -= deltaY;
-                StartCoroutine(MoveCoroutine(blocadePos, false));
+                posX = blocadePos[0];
+                posY = blocadePos[1];
+                destination = gridScript.GetCoordinates(blocadePos[0], blocadePos[1]);
+                StartCoroutine(MoveCoroutine(destination, false));
             }
             else
             {
@@ -77,23 +83,55 @@ public class PlayerControlScript : MonoBehaviour
         }
         else
         {
-            inMove = false;
+            gameController.Win = false;
+            destination = OutOfGridPosition(deltaX, deltaY);
+            StartCoroutine(MoveCoroutine(destination, true));
         }
     }
 
-    private IEnumerator MoveCoroutine(int[] newPos, bool isEnd)
+    private IEnumerator MoveCoroutine(Vector2 destination, bool isEnd)
     {
-        posX = newPos[0];
-        posY = newPos[1];
-
-        Vector2 destination = gridScript.GetCoordinates(posX, posY);
-
         while (rectTransform.anchoredPosition != destination)
         {
             rectTransform.anchoredPosition = Vector2.MoveTowards(rectTransform.anchoredPosition, destination, speed);
             yield return new WaitForEndOfFrame();
         }
         rectTransform.anchoredPosition = destination;
-        inMove = false;
+        if (!isEnd)
+        {
+            inMove = false;
+        }
+        else
+        {
+            gameController.EndLevel();
+        }
+    }
+
+    private Vector2 OutOfGridPosition(int deltaX, int deltaY)
+    {
+        float _x = 0.0f;
+        float _y = 0.0f;
+        if (deltaX == 1)
+        {
+            _x = gameController.ImageW * (1 + GameControllerScript.GRID_DIMENSION);
+            _y = rectTransform.anchoredPosition.y;
+        }
+        else if (deltaX == -1)
+        {
+            _x =  -gameController.ImageW;
+            _y = rectTransform.anchoredPosition.y;
+        }
+        else if (deltaY == 1)
+        {
+            _y = -gameController.ImageH * (1 + GameControllerScript.GRID_DIMENSION);
+            _x = rectTransform.anchoredPosition.x;
+        }
+        else
+        {
+            _y = gameController.ImageH;
+            _x = rectTransform.anchoredPosition.x;
+        }
+        Vector2 pos = new Vector2(_x, _y);
+        return pos;
     }
 }

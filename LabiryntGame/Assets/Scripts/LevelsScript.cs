@@ -18,8 +18,15 @@ public class LevelsScript : MonoBehaviour
         {
             case 0:
                 lvl[0, 0] = true;
-                lvl[1, 5] = true;
-                lvl[6, 4] = true;
+                lvl[3, 0] = true;
+                lvl[6, 0] = true;
+                lvl[0, 1] = true;
+                lvl[7, 2] = true;
+                lvl[4, 3] = true;
+                lvl[7, 4] = true;
+                lvl[3, 5] = true;
+                lvl[6, 6] = true;
+                lvl[1, 7] = true;
                 break;
             default:
                 break;
@@ -34,8 +41,8 @@ public class LevelsScript : MonoBehaviour
         switch (lvlNumber)
         {
             case 0:
-                xy[0] = 6;
-                xy[1] = 0;
+                xy[0] = 3;
+                xy[1] = 2;
                 break;
             default:
                 break;
@@ -51,7 +58,7 @@ public class LevelsScript : MonoBehaviour
         {
             case 0:
                 xy[0] = 5;
-                xy[1] = 7;
+                xy[1] = 6;
                 break;
             default:
                 break;
