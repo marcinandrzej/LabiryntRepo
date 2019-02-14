@@ -7,6 +7,7 @@ public class GameControllerScript : MonoBehaviour
 {
     public const int GRID_DIMENSION = 8;
 
+    public Text levelTxt;
     public GameObject gamePanel;
     public Sprite obstackleSprite;
     public Sprite playerSprite;
@@ -16,6 +17,8 @@ public class GameControllerScript : MonoBehaviour
     private GridScript gridScript;
     private LevelsScript levelScript;
 
+    private byte currentLvl;
+    private byte levelCount;
     private bool win;
     private float imageW;
     private float imageH;
@@ -65,10 +68,11 @@ public class GameControllerScript : MonoBehaviour
     void Start ()
     {
         guiScript = gameObject.AddComponent<GuiScript>();
-        gridScript = gamePanel.AddComponent<GridScript>();
+        gridScript = gameObject.AddComponent<GridScript>();
         levelScript = gameObject.AddComponent<LevelsScript>();
+        levelCount = LevelsScript.LEVEL_COUNT;
         SetGameGrid(GRID_DIMENSION, GRID_DIMENSION, gamePanel);
-        LoadLevel(0);
+        StartLevel(0);
     }
 	
 	// Update is called once per frame
@@ -76,6 +80,12 @@ public class GameControllerScript : MonoBehaviour
     {
 		
 	}
+
+    public void StartLevel(byte level)
+    {
+        currentLvl = level;
+        LoadLevel(currentLvl);
+    }
 
     private void SetGameGrid(int columnCount, int rowsCount, GameObject gridPanel)
     {
@@ -87,6 +97,7 @@ public class GameControllerScript : MonoBehaviour
 
     private void LoadLevel(int lvlNumber)
     {
+        levelTxt.text = "LEVEL: " + (lvlNumber + 1).ToString();
         // SET OBSTACKLES
         gridScript.LoadLevel(GRID_DIMENSION, GRID_DIMENSION, levelScript.GetLevel(GRID_DIMENSION, lvlNumber));
         gameObjects = new List<GameObject>();
@@ -116,15 +127,34 @@ public class GameControllerScript : MonoBehaviour
         gameObjects.Add(player);
     }
 
+    private void ClearLevel()
+    {
+        for (int i = 0; i < gameObjects.Count; i++)
+        {
+            Destroy(gameObjects[i]);
+        }
+    }
+
+    public void ResetLevel()
+    {
+        ClearLevel();
+        LoadLevel(currentLvl);
+    }
+
     public void EndLevel()
     {
         if (Win)
         {
             Debug.Log("win");
+            currentLvl += 1;
         }
         else
         {
             Debug.Log("lose");
+        }
+        if (currentLvl < levelCount)
+        {
+            ResetLevel();
         }
     }
 }
