@@ -16,7 +16,9 @@ public class GameControllerScript : MonoBehaviour
     private GuiScript guiScript;
     private GridScript gridScript;
     private LevelsScript levelScript;
+    private MenuScript menuScript;
 
+    private int unlockedLevelCount;
     private byte currentLvl;
     private byte levelCount;
     private bool win;
@@ -64,27 +66,46 @@ public class GameControllerScript : MonoBehaviour
         }
     }
 
+    public int UnlockedLevelCount
+    {
+        get
+        {
+            return unlockedLevelCount;
+        }
+
+        set
+        {
+            unlockedLevelCount = value;
+        }
+    }
+
     // Use this for initialization
     void Start ()
     {
+        UnlockedLevelCount = LoadUnlockedCount();
+        gameObjects = new List<GameObject>();
+        menuScript = gameObject.GetComponent<MenuScript>();
         guiScript = gameObject.AddComponent<GuiScript>();
         gridScript = gameObject.AddComponent<GridScript>();
         levelScript = gameObject.AddComponent<LevelsScript>();
         levelCount = LevelsScript.LEVEL_COUNT;
         SetGameGrid(GRID_DIMENSION, GRID_DIMENSION, gamePanel);
-        StartLevel(0);
+        SetMenu();
     }
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
 
     public void StartLevel(byte level)
     {
         currentLvl = level;
         LoadLevel(currentLvl);
+    }
+
+    private void SetMenu()
+    {
+        menuScript.SetMenu(this);
+        levelButtonAction action = LoadLevel;
+        GameObject[] buttons = guiScript.FillWithButtons(menuScript.levelPanel.transform, levelCount, 3, obstackleSprite, "LevelButton");
+        menuScript.SetUpLevelPanel(buttons, action);
+        menuScript.UpdateLevelCleared(UnlockedLevelCount);
     }
 
     private void SetGameGrid(int columnCount, int rowsCount, GameObject gridPanel)
@@ -98,6 +119,7 @@ public class GameControllerScript : MonoBehaviour
     private void LoadLevel(int lvlNumber)
     {
         levelTxt.text = "LEVEL: " + (lvlNumber + 1).ToString();
+        currentLvl = (byte)lvlNumber;
         // SET OBSTACKLES
         gridScript.LoadLevel(GRID_DIMENSION, GRID_DIMENSION, levelScript.GetLevel(GRID_DIMENSION, lvlNumber));
         gameObjects = new List<GameObject>();
@@ -127,7 +149,7 @@ public class GameControllerScript : MonoBehaviour
         gameObjects.Add(player);
     }
 
-    private void ClearLevel()
+    public void ClearLevel()
     {
         for (int i = 0; i < gameObjects.Count; i++)
         {
@@ -145,16 +167,35 @@ public class GameControllerScript : MonoBehaviour
     {
         if (Win)
         {
-            Debug.Log("win");
             currentLvl += 1;
-        }
-        else
-        {
-            Debug.Log("lose");
+            if (UnlockedLevelCount < currentLvl)
+            {
+                UnlockedLevelCount = currentLvl;
+                SaveUnlockedLvl();
+            }
         }
         if (currentLvl < levelCount)
         {
             ResetLevel();
         }
+        else
+        {
+            ClearLevel();
+            menuScript.EndOfLevels();
+        }
+    }
+
+    private int LoadUnlockedCount()
+    {
+        if (PlayerPrefs.HasKey("LabLvlUnlocked"))
+        {
+            return PlayerPrefs.GetInt("LabLvlUnlocked");
+        }
+        return 0;
+    }
+
+    public void SaveUnlockedLvl()
+    {
+        PlayerPrefs.SetInt("LabLvlUnlocked", unlockedLevelCount);
     }
 }

@@ -101,4 +101,28 @@ public class GuiScript : MonoBehaviour
         }
         return images;
     }
+
+    public GameObject[] FillWithButtons(Transform panel, int buttonCount, int columnCount, Sprite image, string name)
+    {
+        GameObject[] buttons = new GameObject[buttonCount];
+        int rowsCount = (int)Mathf.Ceil((float)buttonCount / (float)columnCount);
+        float buttonW = Mathf.Abs(panel.GetComponent<RectTransform>().sizeDelta.x) / (float)columnCount;
+        float buttonH = Mathf.Abs(panel.GetComponent<RectTransform>().sizeDelta.y) / (float)rowsCount;
+        float offsetX = buttonW / 2.0f;
+        float offsetY = -buttonH / 2.0f;
+        for (int i = 0; i < rowsCount; i++)
+        {
+            for (int j = 0; j < columnCount; j++)
+            {
+                if ((i * columnCount + j) < buttonCount)
+                {
+                    GameObject but = CreateButton((name + (i * columnCount + j).ToString()), panel, new Vector2(buttonW, buttonH),
+                        new Vector2(0, 1), new Vector2(0, 1), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f),
+                       new Vector2(offsetX + (j * buttonW), offsetY + (i * -buttonH)), image, Image.Type.Sliced);
+                    buttons[i * columnCount + j] = but;
+                }
+            }
+        }
+        return buttons;
+    }
 }
