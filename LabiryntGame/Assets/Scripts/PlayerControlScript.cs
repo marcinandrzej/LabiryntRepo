@@ -12,6 +12,9 @@ public class PlayerControlScript : MonoBehaviour
     private int posY;
     private bool inMove;
 
+    private float time;
+    private Vector2 mousePos;
+
 	// Use this for initialization
 	void Start ()
     {
@@ -23,6 +26,46 @@ public class PlayerControlScript : MonoBehaviour
     {
         if (!inMove)
         {
+            if (Input.touchCount > 0)
+            {
+                if (Input.GetTouch(0).phase == TouchPhase.Began)
+                {
+                    time = Time.time;
+                    mousePos = Input.GetTouch(0).position;
+                }
+
+                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    time = Time.time - time;
+                    if (time <= 1.0f)
+                    {
+                        mousePos = Input.GetTouch(0).position - mousePos;
+                        if (Mathf.Abs(mousePos.x) > Mathf.Abs(mousePos.y))
+                        {
+                            if (mousePos.x > 0)
+                            {
+                                Move(1, 0);
+                            }
+                            else
+                            {
+                                Move(-1, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (mousePos.y > 0)
+                            {
+                                Move(0, -1);
+                            }
+                            else
+                            {
+                                Move(0, 1);
+                            }
+                        }
+                    }
+                }
+            }
+            /*
             if (Input.GetKey(KeyCode.D))
             {
                 Move(1, 0);
@@ -38,7 +81,7 @@ public class PlayerControlScript : MonoBehaviour
             else if (Input.GetKey(KeyCode.S))
             {
                 Move(0, 1);
-            }
+            }*/
         }
     }
 

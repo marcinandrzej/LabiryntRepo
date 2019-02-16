@@ -56,7 +56,7 @@ public class GuiScript : MonoBehaviour
 
     public GameObject CreateText(string name, Transform parent, Vector2 _sizeDelta, Vector2 _anchorMin, Vector2 _anchorMax,
         Vector3 _localScale, Vector2 _pivot, Vector2 _anchoredPosition, string _text, Color32 _color,
-        bool _resizeTextForBestFit, Font _font, TextAnchor _textAnchor, FontStyle _fontStyle)
+        bool _resizeTextForBestFit, Font _font, TextAnchor _textAnchor, FontStyle _fontStyle, int _fontSize)
     {
         GameObject textObject = new GameObject(name);
         textObject.transform.SetParent(parent);
@@ -72,6 +72,7 @@ public class GuiScript : MonoBehaviour
         textObject.GetComponent<RectTransform>().anchoredPosition = _anchoredPosition;
 
         //Set Text
+        textObject.GetComponent<Text>().fontSize = _fontSize;
         textObject.GetComponent<Text>().resizeTextForBestFit = _resizeTextForBestFit;
         textObject.GetComponent<Text>().font = _font;
         textObject.GetComponent<Text>().alignment = _textAnchor;
@@ -119,6 +120,10 @@ public class GuiScript : MonoBehaviour
                     GameObject but = CreateButton((name + (i * columnCount + j).ToString()), panel, new Vector2(buttonW, buttonH),
                         new Vector2(0, 1), new Vector2(0, 1), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f),
                        new Vector2(offsetX + (j * buttonW), offsetY + (i * -buttonH)), image, Image.Type.Sliced);
+                    GameObject text = CreateText("LvlNumber", but.transform, new Vector2(buttonW / 2.0f, buttonH / 2.0f), new Vector2(0.5f, 0.5f),
+                        new Vector2(0.5f, 0.5f), new Vector3(1, 1, 1), new Vector2(0.5f, 0.5f), new Vector2(0.0f, 0.0f),
+                        (i * columnCount + j + 1).ToString(), new Color32(0, 0, 0, 255), false,
+                        Resources.GetBuiltinResource(typeof(Font), "Arial.ttf") as Font, TextAnchor.MiddleCenter, FontStyle.Normal, 50);
                     buttons[i * columnCount + j] = but;
                 }
             }

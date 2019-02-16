@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LevelsScript : MonoBehaviour
 {
-    public const byte LEVEL_COUNT = 11;
+    public const byte LEVEL_COUNT = 12;
 
     public bool[,] GetLevel(int gridDimension, int lvlNumber)
     {
@@ -150,6 +150,18 @@ public class LevelsScript : MonoBehaviour
                 lvl[1, 7] = true;
                 lvl[5, 7] = true;
                 break;
+            case 11:
+                lvl[7, 0] = true;
+                lvl[1, 1] = true;
+                lvl[5, 2] = true;
+                lvl[2, 4] = true;
+                lvl[7, 4] = true;
+                lvl[3, 5] = true;
+                lvl[4, 5] = true;
+                lvl[0, 6] = true;
+                lvl[2, 7] = true;
+                lvl[6, 7] = true;
+                break;
             default:
                 break;
         }
@@ -206,6 +218,10 @@ public class LevelsScript : MonoBehaviour
                 xy[0] = 1;
                 xy[1] = 2;
                 break;
+            case 11:
+                xy[0] = 0;
+                xy[1] = 0;
+                break;
             default:
                 break;
         }
@@ -261,6 +277,10 @@ public class LevelsScript : MonoBehaviour
             case 10:
                 xy[0] = 6;
                 xy[1] = 6;
+                break;
+            case 11:
+                xy[0] = 3;
+                xy[1] = 3;
                 break;
             default:
                 break;
